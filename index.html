@@ -34,7 +34,12 @@
 		</section>
 
 		<section id="race-view" class="view">
+			<h3>Se prepare...</h3>
 			<div class="race-view-content"></div>
+			<div class="controls">
+				<button type="button" data-rel="left">«</button>
+				<button type="button" data-rel="right">»</button>
+			</div>
 		</section>
 
 		<section id="score-view" class="view">
@@ -68,6 +73,13 @@
 		</ul>
 
 		<h4>Restam {{slots}} vagas</h4>
+	</script>
+
+	<script type="text/x-handlebars-template" id="tpl-race-view">
+		<div class="profile">
+			<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}_race.gif" /></span>
+			<span class="name">{{profile.userName}}</span>
+		</div>
 	</script>
 
 	<script src="http://127.0.0.1:4000/socket.io/socket.io.js"></script>

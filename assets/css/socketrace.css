@@ -153,3 +153,31 @@ ul {
 }
 
 .grid-players .profile {}
+
+#race-view {
+	min-height: 215px;
+}
+#race-view .controls {
+	padding: 10px;
+	width: 285px;
+	margin: 0 auto;
+	display: none;
+}
+#race-view .controls button {
+	float: left;
+	display: block;
+	min-width: 60px;
+	text-align: center;
+	font-size: 3em;
+	background: #000000;
+	color: white;
+	border: 1px solid #666;
+	padding: 10px 45px;
+	margin:0 10px;
+}
+
+#race-view .controls button.selected {
+	background: #333;
+	color: #fff;
+	box-shadow:  4px 4px 4px 1px rgba(0, 0, 0, .3);
+}

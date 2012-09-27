@@ -54,30 +54,37 @@ DEALINGS IN THE SOFTWARE.
 		BEFORE_SHOW               = 'beforeShow_',
 		CURRENT                   = 'current',
 		CLICK                     = 'click',
-		DOM_GRID_VIEW_CONTENT = '.grid-view-content',
+		DOM_GRID_VIEW_CONTENT     = '.grid-view-content',
+		DOM_RACE_VIEW_CONTENT     = '.race-view-content',
+		DOM_RACE_CONTROLS         = '#race-view .controls button',
 		DOM_INPUT_USER_NAME       = '#userName',
 		DOM_INPUT_AVATAR          = '#avatar',
 		DOM_SIGNUP_FORM           = '#signup-form',
 		DOM_SIGNUP_FORM_IMAGES    =  DOM_SIGNUP_FORM + ' ul li img',
 		DOM_UL_AVATARS            = 'ul.avatars',
-		SOCKET_FINISH_RACE        = 'finish_race',
 		GRID                      = 'grid',
 		MESSAGE_BOX               = '.message-box',
 		MESSAGE_CONNECTED         = 'Você está conectado, escolha seu nome e avatar',
 		MESSAGE_DISCONNECTED      = 'O jogo acabou! Bye ;)',
+		MESSAGE_FREEZETIME        = 'Iniciando em: ',
 		MESSAGE_SIGNUP_LOADING    = 'Aguarde.. registrando sua conta..',
 		MESSAGE_VALIDATION_FIELDS = 'Preencha seu nome e escolha um avatar',
+		MESSAGE_NEW_PLAYER        = 'Novo jogador conectado: ',
+		RACE                      = 'race',
 		REGISTER_SUCCESS          = 'register_success',
 		SELECTED                  = 'selected',
 		SIGNUP                    = 'signup',
 		SOCKET_CONNECTED          = 'connected',
+		SOCKET_FREEZETIME         = 'freezetime',
 		SOCKET_NEW_PLAYER         = 'new_player',
 		SOCKET_SHOW_SCORE         = 'show_score',
-		SOCKET_START_RACE         = 'start_race',
-		SOCKET_UPDATE_GRID        = 'update_grid',
+		SOCKET_START_RACE         = 'start',
+		SOCKET_PREPARE_START_RACE = 'prepareRace',
+		SOCKET_UPDATE_GRID        = 'updateGrid',
 		SUBMIT                    = 'submit',
 		TPL_AVATARS_LIST          = '#tpl-avatar-list',
-		TPL_GRID_VIEW             = '#tpl-grid-view';
+		TPL_GRID_VIEW             = '#tpl-grid-view',
+		TPL_RACE_VIEW             = '#tpl-race-view';
 
 	/**
 	 *
@@ -90,9 +97,7 @@ DEALINGS IN THE SOFTWARE.
 		instance.settings = {
 			serverAddress: '127.0.0.1',
 			serverPort: '4000',
-			serverPath: '',
-			maxPlayers: 10,
-			freezeTime: 5000 // in miliseconds
+			maxPlayers: 10 // in miliseconds
 		};
 
 		instance.views = {
@@ -104,6 +109,16 @@ DEALINGS IN THE SOFTWARE.
 		};
 
 		instance.bootstrap();
+	};
+
+	SocketRace.prototype.bootstrap = function () {
+		var instance = this;
+
+		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort + '/');
+
+		instance.binds();
+
+		instance.showView(SIGNUP);
 	};
 
 	SocketRace.prototype.binds = function () {
@@ -124,23 +139,26 @@ DEALINGS IN THE SOFTWARE.
 		});
 
 		instance.socketServer.on(SOCKET_NEW_PLAYER, function (data) {
-			if (instance.player) {
-				if (data.id !== instance.player.socketId) {
-					instance.showAlert(data);
-				}
-			}
+			instance.showAlert({message: MESSAGE_NEW_PLAYER + data.userName});
+		});
+
+		instance.socketServer.on(SOCKET_FREEZETIME, function (data) {
+			instance.showAlert({
+				dontErase: true,
+				message: MESSAGE_FREEZETIME + data.timeLeft + '...'
+			});
 		});
 
 		instance.socketServer.on(SOCKET_UPDATE_GRID, function (data) {
 			instance.updateGridScreen(data);
 		});
 
-		instance.socketServer.on(SOCKET_START_RACE, function (data) {
-			instance.startRace(data);
+		instance.socketServer.on(SOCKET_PREPARE_START_RACE, function (data) {
+			instance.prepareRace(data);
 		});
 
-		instance.socketServer.on(SOCKET_FINISH_RACE, function (data) {
-			instance.finishRace(data);
+		instance.socketServer.on(SOCKET_START_RACE, function (data) {
+			instance.startRace(data);
 		});
 
 		instance.socketServer.on(SOCKET_SHOW_SCORE, function (data) {
@@ -153,19 +171,10 @@ DEALINGS IN THE SOFTWARE.
 		});
 	};
 
-	SocketRace.prototype.bootstrap = function () {
-		var instance = this;
-
-		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort + '/' + instance.settings.serverPath);
-
-		instance.showView(SIGNUP);
-		instance.binds();
-	};
-
 	SocketRace.prototype.signupHandler = function (event) {
 		var instance = this,
 			userName = $(DOM_SIGNUP_FORM).find(DOM_INPUT_USER_NAME).val(),
-			avatar = $(DOM_SIGNUP_FORM).find(DOM_INPUT_AVATAR).val();
+			avatar   = $(DOM_SIGNUP_FORM).find(DOM_INPUT_AVATAR).val();
 
 		if (!!userName && !!avatar) {
 			instance.showAlert({
@@ -189,31 +198,19 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		if (data.success) {
-			instance.player                 = new Player();
-
-			instance.player.database        = data.result;
-			instance.player.connected       = true;
-			instance.player.position        = 0;
-			instance.player.socketId        = instance.socketId;
+			instance.player            = new Player();
+			
+			instance.player.data       = data.result;
+			instance.player.connected  = true;
+			instance.player.position   = 0;
+			instance.player.socketId   = instance.socketId;
+			instance.player.superClass = instance;
 
 			instance.showGridScreen();
 		}
 		else {
 			instance.showAlert(data);
 		}
-	};
-
-	SocketRace.prototype.getAvatar = function (id) {
-		var instance = this;
-
-		$.each(AVATARS, function (index, item) {
-			var avatar = AVATARS[index];
-			if (avatar.id == id) {
-				return false;
-			}
-		});
-
-		return avatar;
 	};
 
 	SocketRace.prototype.showAlert = function (data) {
@@ -254,7 +251,6 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		$(MESSAGE_BOX).html('');
-
 		instance.showView('grid');
 	};
 
@@ -263,15 +259,15 @@ DEALINGS IN THE SOFTWARE.
 
 		if (!data) {
 			instance.socketServer.emit(SOCKET_UPDATE_GRID, {
-				player: instance.player.database
+				player: instance.player.data
 			});
 		}
 		else {
 			if (data.success) {
-				var resultPlayers = data.result.players,
+				var resultPlayers    = data.result.players,
 					gridViewTemplate = $(TPL_GRID_VIEW).html(),
-					template = Handlebars.compile(gridViewTemplate),
-					players = [];
+					template         = Handlebars.compile(gridViewTemplate),
+					players          = [];
 
 				delete resultPlayers[instance.player.socketId];
 
@@ -279,11 +275,9 @@ DEALINGS IN THE SOFTWARE.
 					players.push(item);
 				});
 
-				console.log(players);
-
 				var html = template({
-						profile: instance.player.database,
-						slots: instance.settings.maxPlayers - players.length,
+						profile: instance.player.data,
+						slots: (instance.settings.maxPlayers-1) - players.length,
 						avatar_path: AVATARS_PATH,
 						players: players
 					});
@@ -297,25 +291,56 @@ DEALINGS IN THE SOFTWARE.
 		}
 	};
 
-	SocketRace.prototype.startRace = function (data) {};
+	SocketRace.prototype.startRace = function (data) {
+		var instance 	 = this,
+			player       = instance.player,
+			game         = data.game;
 
-	SocketRace.prototype.finishRace = function (data) {};
+		if (data.success) {
+			$(DOM_RACE_CONTROLS).on(CLICK, function (e) {
+				var self = $(e.target);
+
+				$(DOM_RACE_CONTROLS).removeClass(SELECTED);
+
+				self.addClass(SELECTED);
+				instance.player.move(self);
+				e.preventDefault();
+			});
+
+			$(DOM_RACE_CONTROLS).parent().show();
+
+			instance.showAlert({message: 'Valendo!!'});
+		}
+	};
+
+	SocketRace.prototype.prepareRace = function (data) {
+		var instance 	 = this,
+			raceTemplate = $(TPL_RACE_VIEW).html(),
+			template     = Handlebars.compile(raceTemplate);
+
+		if (data.success) {
+			var html = template({
+					avatar_path: AVATARS_PATH,
+					profile: instance.player.data
+				});
+
+			$(DOM_RACE_VIEW_CONTENT).html(html);
+
+			instance.showView('race');
+		}
+	};
 
 	SocketRace.prototype.showScore = function (data) {
 		var instance = this;
 
 		instance.showView('score');
-
-		if (data.players.length > 0) {
-
-		}
 	};
 
 	SocketRace.prototype.afterShow_signup = function () {
-		var instance = this,
+		var instance        = this,
 			avatarsTemplate = $(TPL_AVATARS_LIST).html(),
-			template = Handlebars.compile(avatarsTemplate),
-			html = template({avatars: AVATARS});
+			template        = Handlebars.compile(avatarsTemplate),
+			html            = template({avatars: AVATARS});
 
 		$(DOM_UL_AVATARS).html(html);
 
@@ -342,19 +367,26 @@ DEALINGS IN THE SOFTWARE.
 	 *
 	 **/
 	var Player = function () {
-	var instance 	 = this,
-		position     = 0,
-		connected    = false,
-		socketId     = false,
-		database     = {};
+		var instance 	 = this,
+			position     = 0,
+			connected    = false,
+			socketId     = false,
+			database     = {};
 	};
 
-	Player.prototype.handleTouch = function () {
+	Player.prototype.move = function(element) {
+		var instance    	= this,
+			actualClick     = element.data('rel'),
+			move			= false,
+			lastClick       = (instance.lastClick) ? instance.lastClick : 'right';
 
-	};
+		if (lastClick != actualClick) {
+			instance.superClass.socketServer.emit('move', {
+				id: instance.data.id
+			});
+		}
 
-	Player.prototype.move = function(x) {
-		var instance = this;
+		console.log(actualClick);
 	};
 
 	var Game = new SocketRace();
