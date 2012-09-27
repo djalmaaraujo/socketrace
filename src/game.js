@@ -160,6 +160,8 @@ DEALINGS IN THE SOFTWARE.
 		instance.socketServer.on(SOCKET_UPDATE_GRID, function (data) {
 			if (instance.currentView == GRID) {
 				instance.updateGridScreen(data);
+			} else {
+				clearTimeout(instance.updateGridTimer);
 			}
 		});
 
@@ -306,7 +308,7 @@ DEALINGS IN THE SOFTWARE.
 			game         = data.game;
 
 		if (data.success) {
-			$(DOM_RACE_CONTROLS).on(CLICK, function (e) {
+			$(DOM_RACE_CONTROLS).on('tap', function (e) {
 				var self = $(e.target);
 
 				$(DOM_RACE_CONTROLS).removeClass(SELECTED);
@@ -401,13 +403,13 @@ DEALINGS IN THE SOFTWARE.
 			move			= false,
 			lastClick       = (instance.lastClick) ? instance.lastClick : 'right';
 
-		if (lastClick != actualClick) {
+		if ( ((lastClick == 'right') && (actualClick == 'left')) || ((lastClick == 'left') && (actualClick == 'right')) ) {
 			instance.superClass.socketServer.emit('move', {
 				id: instance.data.id
 			});
 		}
 
-		console.log(actualClick);
+		instance.lastClick = actualClick;
 	};
 
 	var Game = new SocketRace();

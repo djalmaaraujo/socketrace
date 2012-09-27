@@ -39,6 +39,13 @@ ul {
 	text-align: center;
 }
 
+#wrapper.stats {
+	min-width: auto;
+	max-width: auto;
+	width: 100%;
+	margin: 0;
+}
+
 .header {
 	text-align: center;
 	padding: 0 5px;
@@ -183,4 +190,15 @@ ul {
 	background: #333;
 	color: #fff;
 	box-shadow:  4px 4px 4px 1px rgba(0, 0, 0, .3);
+}
+
+#race-stats-view {
+	width: 1900px
+}
+#race-players {}
+#race-players li {
+	position: relative;
+	margin-top: 60px;
+	min-height: 60px;
+	display: block;
 }

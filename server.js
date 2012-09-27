@@ -53,7 +53,8 @@ var GameServer = function() {
 		created_at: false
 	};
 
-	instance.IO = require(SOCKET_IO).listen(instance.settings.SERVER_PORT);
+	instance.IO        = require(SOCKET_IO).listen(instance.settings.SERVER_PORT);
+	instance.dashboard = instance.IO;
 
 	instance.bootstrap();
 };
@@ -92,6 +93,12 @@ GameServer.prototype.handlers = function () {
 			instance.onMoveHandler(data, socket);
 		});
 	});
+
+	instance.dashboard
+		.of('/dashboard')
+  		.on('connection', function (socket) {
+  			instance.dashBoardSocket = socket;
+		});
 };
 
 GameServer.prototype.onConnectionHandler = function (socket) {
@@ -116,17 +123,34 @@ GameServer.prototype.onDisconnectHandler = function (data, socketId) {
 	var instance = this;
 
 	delete instance.GAME.players[socketId];
+
+	instance.submitDashBoardStats();
 };
 
 GameServer.prototype.onMoveHandler = function (data, socket) {
 	var instance = this;
 
 	if (instance.GAME.started == true) {
-		var playerId = data.id;
+		var playerId = data.id,
+			player = instance.GAME.players[playerId];
 
-		if (instance.GAME.players[playerId] && instance.GAME.players[playerId]) {
-			instance.GAME.players[data.id].position =+ 10;
+		if (player) {
+			player.position += 10;
+
+			instance.submitDashBoardStats();
 		}
+	}
+};
+
+GameServer.prototype.submitDashBoardStats = function () {
+	var instance = this;
+
+	if (instance.dashBoardSocket) {
+		instance.dashBoardSocket.emit('stats', {
+			success: true,
+			result: instance.GAME.players,
+			game: instance.GAME
+		});
 	}
 };
 
@@ -151,7 +175,8 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 				user = {
 					id: socketId,
 					userName: data.userName,
-					avatar: data.avatar
+					avatar: data.avatar,
+					position: 0
 				};
 
 			instance.GAME.players[socketId] = user;
@@ -188,6 +213,7 @@ GameServer.prototype.checkForStart = function () {
 					success: true
 				});
 
+				instance.submitDashBoardStats();
 				instance.startGame();
 
 				clearInterval(instance.TIME_checkForStart);
