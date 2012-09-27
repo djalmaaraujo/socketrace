@@ -246,6 +246,7 @@ GameServer.prototype.totalPlayers = function () {
 		players++;
 	}
 
+	console.log(players);
 	return parseInt(players);
 };
 

@@ -158,7 +158,9 @@ DEALINGS IN THE SOFTWARE.
 		});
 
 		instance.socketServer.on(SOCKET_UPDATE_GRID, function (data) {
-			instance.updateGridScreen(data);
+			if (instance.currentView == GRID) {
+				instance.updateGridScreen(data);
+			}
 		});
 
 		instance.socketServer.on(SOCKET_PREPARE_START_RACE, function (data) {
@@ -250,6 +252,8 @@ DEALINGS IN THE SOFTWARE.
 			.addClass(CURRENT)
 			.show();
 
+		instance.currentView = view;
+
 		if (SocketRace.prototype.hasOwnProperty(AFTER_SHOW + view)) {
 			instance[AFTER_SHOW + view].call(instance, arguments);
 		}
@@ -289,7 +293,8 @@ DEALINGS IN THE SOFTWARE.
 				$(DOM_GRID_VIEW_CONTENT).html(html);
 			}
 
-			setTimeout(function () {
+			clearTimeout(instance.updateGridTimer);
+			instance.updateGridTimer = setTimeout(function () {
 				instance.updateGridScreen();
 			}, 1000);
 		}
@@ -322,6 +327,8 @@ DEALINGS IN THE SOFTWARE.
 		var instance 	 = this,
 			raceTemplate = $(TPL_RACE_VIEW).html(),
 			template     = Handlebars.compile(raceTemplate);
+
+		clearTimeout(instance.updateGridTimer);
 
 		if (data.success) {
 			var html = template({
