@@ -67,20 +67,23 @@ DEALINGS IN THE SOFTWARE.
 		MESSAGE_CONNECTED         = 'Você está conectado, escolha seu nome e avatar',
 		MESSAGE_DISCONNECTED      = 'O jogo acabou! Bye ;)',
 		MESSAGE_FREEZETIME        = 'Iniciando em: ',
+		MESSAGE_GOGOGO            = 'Valendo!!',
 		MESSAGE_SIGNUP_LOADING    = 'Aguarde.. registrando sua conta..',
 		MESSAGE_VALIDATION_FIELDS = 'Preencha seu nome e escolha um avatar',
 		MESSAGE_NEW_PLAYER        = 'Novo jogador conectado: ',
+		NEXT                      = 'next',
 		RACE                      = 'race',
 		REGISTER_SUCCESS          = 'register_success',
 		SELECTED                  = 'selected',
 		SIGNUP                    = 'signup',
 		SOCKET_CONNECTED          = 'connected',
 		SOCKET_FREEZETIME         = 'freezetime',
-		SOCKET_NEW_PLAYER         = 'new_player',
-		SOCKET_SHOW_SCORE         = 'show_score',
+		SOCKET_NEW_PLAYER         = 'newPlayer',
+		SOCKET_SHOW_SCORE         = 'showScore',
 		SOCKET_START_RACE         = 'start',
 		SOCKET_PREPARE_START_RACE = 'prepareRace',
 		SOCKET_UPDATE_GRID        = 'updateGrid',
+		SOCKET_WAIT_NEXT_GAME     = 'waitForNextGame',
 		SUBMIT                    = 'submit',
 		TPL_AVATARS_LIST          = '#tpl-avatar-list',
 		TPL_GRID_VIEW             = '#tpl-grid-view',
@@ -95,7 +98,7 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		instance.settings = {
-			serverAddress: '127.0.0.1',
+			serverAddress: '10.0.1.32',
 			serverPort: '4000',
 			maxPlayers: 10 // in miliseconds
 		};
@@ -105,7 +108,8 @@ DEALINGS IN THE SOFTWARE.
 			'signup': $('#signup-view'),
 			'grid': $('#grid-view'),
 			'race': $('#race-view'),
-			'score': $('#score-view')
+			'score': $('#score-view'),
+			'next': $("#next-game-view")
 		};
 
 		instance.bootstrap();
@@ -116,12 +120,12 @@ DEALINGS IN THE SOFTWARE.
 
 		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort + '/');
 
-		instance.binds();
+		instance.handlers();
 
 		instance.showView(SIGNUP);
 	};
 
-	SocketRace.prototype.binds = function () {
+	SocketRace.prototype.handlers = function () {
 		var instance = this;
 
 		instance.socketServer.on(SOCKET_CONNECTED, function (data) {
@@ -132,6 +136,10 @@ DEALINGS IN THE SOFTWARE.
 			}
 
 			instance.showAlert({message: MESSAGE_CONNECTED});
+		});
+
+		instance.socketServer.on(SOCKET_WAIT_NEXT_GAME, function (data) {
+			instance.waitForNextGame(data);
 		});
 
 		instance.socketServer.on(SIGNUP, function (data) {
@@ -199,7 +207,7 @@ DEALINGS IN THE SOFTWARE.
 
 		if (data.success) {
 			instance.player            = new Player();
-			
+
 			instance.player.data       = data.result;
 			instance.player.connected  = true;
 			instance.player.position   = 0;
@@ -271,13 +279,9 @@ DEALINGS IN THE SOFTWARE.
 
 				delete resultPlayers[instance.player.socketId];
 
-				$.each(resultPlayers, function (index, item) {
-					players.push(item);
-				});
-
 				var html = template({
 						profile: instance.player.data,
-						slots: (instance.settings.maxPlayers-1) - players.length,
+						slots: (instance.settings.maxPlayers-1) - data.result.total,
 						avatar_path: AVATARS_PATH,
 						players: players
 					});
@@ -309,7 +313,8 @@ DEALINGS IN THE SOFTWARE.
 
 			$(DOM_RACE_CONTROLS).parent().show();
 
-			instance.showAlert({message: 'Valendo!!'});
+			instance.views.race.find('h3').html(MESSAGE_GOGOGO);
+			instance.showAlert({message: MESSAGE_GOGOGO});
 		}
 	};
 
@@ -331,7 +336,8 @@ DEALINGS IN THE SOFTWARE.
 	};
 
 	SocketRace.prototype.showScore = function (data) {
-		var instance = this;
+		var instance = this,
+			players = data.game.players;
 
 		instance.showView('score');
 	};
@@ -353,6 +359,14 @@ DEALINGS IN THE SOFTWARE.
 
 			e.preventDefault();
 		});
+	};
+
+	SocketRace.prototype.waitForNextGame = function (data) {
+		var instance = this;
+
+		if (data.success) {
+			instance.showView(NEXT);
+		}
 	};
 
 	SocketRace.prototype.afterShow_grid = function () {

@@ -39,7 +39,10 @@ ul {
 	text-align: center;
 }
 
-.header { text-align: center }
+.header {
+	text-align: center;
+	padding: 0 5px;
+}
 .header h1 {
 	float: left;
 	font-size: 1.2em;
