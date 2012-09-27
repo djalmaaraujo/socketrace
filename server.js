@@ -23,6 +23,20 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
+var ON_CONNECTION     = 'connection',
+	ON_WAIT_NEXT_GAME = 'waitForNextGame',
+	ON_DISCONNECT     = 'disconnect',
+	ON_CONNECTED      = 'connected',
+	ON_SIGNUP         = 'signup',
+	ON_NEW_PLAYER     = 'newPlayer',
+	ON_UPDATE_GRID    = 'updateGrid',
+	ON_MOVE           = 'move',
+	ON_PREPARE_RACE   = 'prepareRace',
+	ON_FREEZETIME     = 'freezetime',
+	ON_START          = 'start',
+	ON_SHOW_SCORE     = 'showScore',
+	SOCKET_IO         = 'socket.io';
+
 var GameServer = function() {
 	var	instance  = this;
 
@@ -39,7 +53,7 @@ var GameServer = function() {
 		created_at: false
 	};
 
-	instance.IO = require('socket.io').listen(instance.settings.SERVER_PORT);
+	instance.IO = require(SOCKET_IO).listen(instance.settings.SERVER_PORT);
 
 	instance.bootstrap();
 };
@@ -56,81 +70,107 @@ GameServer.prototype.bootstrap = function () {
 GameServer.prototype.handlers = function () {
 	var instance = this;
 
-	instance.IO.sockets.on('connection', function (socket) {
+	instance.IO.sockets.on(ON_CONNECTION, function (socket) {
 		var socketId = socket.id;
 
-		if (!instance.initialSocket) {
-			instance.initialSocket = socket;
-		}
+		instance.onConnectionHandler(socket);
 
-		if (instance.GAME.started) {
-			socket.emit('waitForNextGame', {success: true});
-			return false;
-		}
-
-		// EMIT connected
-		socket.emit('connected', {
-			id: socketId
+		socket.on(ON_DISCONNECT, function (data) {
+			instance.onDisconnectHandler(data, socketId);
 		});
 
-		// ON disconnect
-		socket.on('disconnect', function (data) {
-			delete instance.GAME.players[socket.id];
-		});
-
-		// ON signup
-		socket.on('signup', function (data) {
-			if (data) {
-				if (data.id && data.userName && data.avatar) {
-					var socketId = data.id,
-						user = {
-							id: socketId,
-							userName: data.userName,
-							avatar: data.avatar
-						};
-
-					instance.GAME.players[socketId] = user;
-
-					socket.emit('signup', {
-						success: true,
-						result: user
-					});
-
-					socket.broadcast.emit('newPlayer', {userName: user.userName});
-				}
-				else {
-					socket.emit('signup', {
-						success: false,
-						message: 'Os dados estão inválidos. Recarregue a página e tente novamente',
-						result: false
-					});
-				}
-			}
+		socket.on(ON_SIGNUP, function (data) {
+			instance.onSignupHandler(data, socket);
 		});
 
 
-		// ON updateGrid
-		socket.on('updateGrid', function (data) {
-
-			socket.emit('updateGrid', {
-				success: true,
-				result: {
-					players: instance.GAME.players,
-					total: instance.totalPlayers()
-				}
-			});
+		socket.on(ON_UPDATE_GRID, function (data) {
+			instance.onUpdateGridHandler(data, socket);
 		});
 
-		socket.on('move', function (data) {
-			if (instance.GAME.started == true) {
-				var playerId = data.id;
-
-				if (instance.GAME.players[playerId] && instance.GAME.players[playerId]) {
-					instance.GAME.players[data.id].position =+ 10;
-				}
-			}
+		socket.on(ON_MOVE, function (data) {
+			instance.onMoveHandler(data, socket);
 		});
 	});
+};
+
+GameServer.prototype.onConnectionHandler = function (socket) {
+	var instance = this,
+		socketId = socket.id;
+
+	if (!instance.initialSocket) {
+		instance.initialSocket = socket;
+	}
+
+	if (instance.GAME.started) {
+		socket.emit(ON_WAIT_NEXT_GAME, {success: true});
+		return false;
+	}
+
+	socket.emit(ON_CONNECTED, {
+		id: socketId
+	});
+};
+
+GameServer.prototype.onDisconnectHandler = function (data, socketId) {
+	var instance = this;
+
+	delete instance.GAME.players[socketId];
+};
+
+GameServer.prototype.onMoveHandler = function (data, socket) {
+	var instance = this;
+
+	if (instance.GAME.started == true) {
+		var playerId = data.id;
+
+		if (instance.GAME.players[playerId] && instance.GAME.players[playerId]) {
+			instance.GAME.players[data.id].position =+ 10;
+		}
+	}
+};
+
+GameServer.prototype.onUpdateGridHandler = function (data, socket) {
+	var instance = this;
+
+	socket.emit(ON_UPDATE_GRID, {
+		success: true,
+		result: {
+			players: instance.GAME.players,
+			total: instance.totalPlayers()
+		}
+	});
+};
+
+GameServer.prototype.onSignupHandler = function (data, socket) {
+	var instance = this;
+
+	if (data) {
+		if (data.id && data.userName && data.avatar) {
+			var socketId = data.id,
+				user = {
+					id: socketId,
+					userName: data.userName,
+					avatar: data.avatar
+				};
+
+			instance.GAME.players[socketId] = user;
+
+			socket.emit(ON_SIGNUP, {
+				success: true,
+				result: user
+			});
+
+			socket.broadcast.emit(ON_NEW_PLAYER, {userName: user.userName});
+		}
+		else {
+			socket.emit(ON_SIGNUP, {
+				success: false,
+				message: 'Os dados estão inválidos. Recarregue a página e tente novamente',
+				result: false
+			});
+		}
+	}
 };
 
 GameServer.prototype.checkForStart = function () {
@@ -144,7 +184,7 @@ GameServer.prototype.checkForStart = function () {
 
 			if (total >= instance.GAME.minPlayers) {
 
-				instance.initialSocket.broadcast.emit('prepareRace', {
+				instance.initialSocket.broadcast.emit(ON_PREPARE_RACE, {
 					success: true
 				});
 
@@ -171,7 +211,7 @@ GameServer.prototype.startGame = function () {
 		instance.GAME.freezetime--;
 
 		if (instance.GAME.freezetime > 0) {
-			instance.initialSocket.broadcast.emit('freezetime', {
+			instance.initialSocket.broadcast.emit(ON_FREEZETIME, {
 				timeLeft: instance.GAME.freezetime,
 				success: true
 			});
@@ -180,7 +220,7 @@ GameServer.prototype.startGame = function () {
 			instance.GAME.started = true;
 			instance.GAME.created_at = date.getTime();
 
-			instance.initialSocket.broadcast.emit('start', {
+			instance.initialSocket.broadcast.emit(ON_START, {
 				game: instance.GAME,
 				success: true
 			});
@@ -195,7 +235,7 @@ GameServer.prototype.finishGame = function () {
 	var instance = this;
 
 	instance.GAME.started = false;
-	instance.initialSocket.broadcast.emit('showScore', {game: instance.GAME});
+	instance.initialSocket.broadcast.emit(ON_SHOW_SCORE, {game: instance.GAME});
 };
 
 GameServer.prototype.totalPlayers = function () {

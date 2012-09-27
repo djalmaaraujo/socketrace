@@ -342,6 +342,14 @@ DEALINGS IN THE SOFTWARE.
 		instance.showView('score');
 	};
 
+	SocketRace.prototype.waitForNextGame = function (data) {
+		var instance = this;
+
+		if (data.success) {
+			instance.showView(NEXT);
+		}
+	};
+
 	SocketRace.prototype.afterShow_signup = function () {
 		var instance        = this,
 			avatarsTemplate = $(TPL_AVATARS_LIST).html(),
@@ -359,14 +367,6 @@ DEALINGS IN THE SOFTWARE.
 
 			e.preventDefault();
 		});
-	};
-
-	SocketRace.prototype.waitForNextGame = function (data) {
-		var instance = this;
-
-		if (data.success) {
-			instance.showView(NEXT);
-		}
 	};
 
 	SocketRace.prototype.afterShow_grid = function () {
