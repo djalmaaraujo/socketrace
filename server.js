@@ -35,10 +35,16 @@ var ON_CONNECTION     = 'connection',
 	ON_FREEZETIME     = 'freezetime',
 	ON_START          = 'start',
 	ON_SHOW_SCORE     = 'showScore',
-	SOCKET_IO         = 'socket.io';
+	PUBLIC_DIR        = '/public'
+	SOCKET_IO         = 'socket.io',
+	RAILWAY           = 'railway',
+	EXPRESS           = 'express';
 
 var GameServer = function() {
 	var	instance  = this;
+	var railway;
+	var express;
+	var app;
 
 	instance.settings = {
 		SERVER_PORT: 4000
@@ -53,8 +59,21 @@ var GameServer = function() {
 		created_at: false
 	};
 
-	instance.IO        = require(SOCKET_IO).listen(instance.settings.SERVER_PORT);
+	railway = require(RAILWAY);
+
+	express = require(EXPRESS);
+
+	app = railway.createServer();
+
+	app.listen(instance.settings.SERVER_PORT);
+
+	instance.IO        = require(SOCKET_IO).listen(app);
 	instance.dashboard = instance.IO;
+
+	app.configure(function () {
+		var cwd = process.cwd();
+		app.use(express.static(cwd + PUBLIC_DIR, {maxAge: 300}));
+	});
 
 	instance.bootstrap();
 };
