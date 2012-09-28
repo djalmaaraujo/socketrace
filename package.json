@@ -1,0 +1,27 @@
+{
+  "name": "socketrace",
+  "description": "An experimental JS Game using NodeJS + Socket.io",
+  "version": "0.0.1",
+  "private": true,
+  "homepage": "https://github.com/djalmaaraujo/socketrace",
+  "author": {
+    "name": "Djalma Araujo",
+    "email": "djalma.araujo@liferay.com",
+    "url": "https://github.com/djalmaaraujo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/djalmaaraujo/socketrace"
+  },
+  "bugs": {
+    "url": "https://github.com/djalmaaraujo/socketrace/issues"
+  },
+  "engines": ["node >= 0.6.15"],
+  "main": "server.js",
+  "dependencies": {
+    "express": "2.5.9",
+    "railway": ">= 0.2.6",
+    "socket.io": ">= 0.9.6",
+    "less-middleware": "*"
+  }
+}
