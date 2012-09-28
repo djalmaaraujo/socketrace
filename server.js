@@ -72,7 +72,7 @@ var GameServer = function() {
 
 	app.configure(function () {
 		var cwd = process.cwd();
-		app.use(express.static(cwd + PUBLIC_DIR, {maxAge: 300}));
+		app.use(express.static(cwd + PUBLIC_DIR));
 	});
 
 	instance.bootstrap();
