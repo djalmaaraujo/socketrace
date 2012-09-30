@@ -18,7 +18,7 @@
 		<section id="signup-view" class="view">
 			<section class="form">
 				<form id="signup-form">
-					<input type="text" name="username" id="userName" placeholder="Digite seu nome" value="djalma" />
+					<input type="text" name="username" id="userName" placeholder="Digite seu nome" value="" />
 					<input type="hidden" name="avatar" id="avatar" value="homer" />
 
 					<h4>Escolha um avatar</h4>
@@ -43,11 +43,12 @@
 		</section>
 
 		<section id="score-view" class="view">
-			<h2>Linha de chegada</h2>
-			<div class="score-view-content"></div>
+			<h2>Posições</h2>
+			<p>Fim de jogo!</p>
+			<p>Obrigado por participar!</p>
 		</section>
 
-	<section id="next-game-view" class="view">
+		<section id="next-game-view" class="view">
 			<h2>Aguarde a próxima rodada...</h2>
 		</section>
 	</div>
@@ -90,6 +91,8 @@
 	<script src="http://10.0.1.32:4000/socket.io/socket.io.js"></script>
 	<script src="src/lib/handlebars-1.0.rc.1.js"></script>
 	<script src="src/lib/zepto.min.js"></script>
+	<script src="config.js"></script>
+	<script src="src/constants.js"></script>
 	<script src="src/game.js"></script>
 </body>
 </html>

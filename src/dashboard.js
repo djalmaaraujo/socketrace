@@ -24,43 +24,12 @@ DEALINGS IN THE SOFTWARE.
 */
 
 (function() {
-
-	var AVATARS_PATH              = 'assets/images/avatar/',
-		AVATARS                   = [
-			{
-				id: 'homer',
-				name: 'Homer :P',
-				src: AVATARS_PATH + 'homer',
-				selected: 'selected'
-			},
-
-			{
-				id: 'lisa',
-				name: 'Lisa               =)',
-				src: AVATARS_PATH + 'lisa'
-			},
-			{
-				id: 'bart',
-				name: 'Bart O.o',
-				src: AVATARS_PATH + 'bart'
-			},
-			{
-				id: 'marge',
-				name: 'Marge ^^',
-				src: AVATARS_PATH + 'marge'
-			}
-		],
-		DOM_RACE_PLAYERS = '#race-players',
-		TPL_RACE_VIEW = '#tpl-race-view';
+	var CONST = SOCKETRACE_CONSTANTS;
 
 	var DashBoardRace = function () {
 		var instance = this;
 
-		instance.settings = {
-			serverAddress: '10.0.1.32',
-			serverPort: '4000',
-			maxPlayers: 10 // in miliseconds
-		};
+		instance.settings = SOCKETRACE_CONFIG;
 
 		instance.bootstrap();
 	};
@@ -76,21 +45,69 @@ DEALINGS IN THE SOFTWARE.
 	DashBoardRace.prototype.handlers = function () {
 		var instance = this;
 
-		instance.socketServer.on('stats', function (data) {
+		instance.socketServer.on(CONST.SOCKET_STATS, function (data) {
 			var resultPlayers    = data.result,
-				raceViewTemplate = $(TPL_RACE_VIEW).html(),
+				raceViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
 				template         = Handlebars.compile(raceViewTemplate),
-				html = '';
+				html             = '';
 
 			$.each(resultPlayers, function (index, item) {
 				html += template({
-					avatar_path: AVATARS_PATH,
+					avatar_path: CONST.AVATARS_PATH,
 					profile: item
-				})
+				});
 			});
 
-			$(DOM_RACE_PLAYERS).html(html);
+			$(CONST.DOM_RACE_PLAYERS).html(html);
 		});
+
+		instance.socketServer.on(CONST.SOCKET_NEW_PLAYER, function (data) {
+			instance.showAlert({message: CONST.MESSAGE_NEW_PLAYER + data.userName});
+		});
+
+		instance.socketServer.on(CONST.SOCKET_SHOW_SCORE, function (data) {
+			instance.showScore(data);
+		});
+	};
+
+	DashBoardRace.prototype.showAlert = function (data) {
+		var instance = this;
+
+		$(CONST.MESSAGE_BOX)
+			.show()
+			.html(data.message);
+
+		if (!data.dontErase) {
+			window.messageAlert = setTimeout(function () {
+				$(CONST.MESSAGE_BOX).html('');
+			}, 2000);
+		}
+	};
+
+	DashBoardRace.prototype.showScore = function (data) {
+		var instance          = this,
+			winner            = data.game.players[data.game.winner],
+			scoreViewTemplate = $(CONST.TPL_RACE_SCORE_VIEW).html(),
+			template          = Handlebars.compile(scoreViewTemplate),
+			html              = '',
+			players           = data.game.players;
+
+		players.sort(function (p1, p2) {
+			if (p1.position == p2.position) return 0;
+			return (p1.position < p2.position);
+		});
+
+		$.each(players, function (index, item) {
+			item.position = 0;
+			html += template({
+				avatar_path: CONST.AVATARS_PATH,
+				profile: item
+			});
+		});
+
+		$(CONST.DOM_RACE_STATS_VIEW).hide();
+		$(DOM_SCORE_RACE_PLAYERS).html(html);
+		$(CONST.DOM_SCORE_VIEW).show();
 	};
 
 	new DashBoardRace();

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Socket Race</title>
+	<link rel="stylesheet" href="assets/css/normalize.min.css" media="all" />
+	<link rel="stylesheet" href="assets/css/socketrace.css" media="all" />
+</head>
+<body>
+	<div id="wrapper" class="stats">
+		<div class="message-box"></div>
+		<header class="header">
+			<img src="assets/images/liferay.png" alt="" />
+			<h1>Socket Race</h1>
+		</header>
+
+		<section id="race-stats-view" class="view current">
+			<ul id="race-players"></ul>
+		</section>
+
+		<section id="score-view" class="view">
+			<h2>Fim de jogo!</h2>
+			<p><strong>Posições:</strong></p>
+			<div class="score-view-content">
+				<div class="winner"></div>
+				<ul id="score-race-players"></ul>
+			</div>
+			<p>Obrigado por participar!</p>
+		</section>
+	</div>
+
+	<script type="text/x-handlebars-template" id="tpl-race-view">
+		<li style="left: {{profile.position}}px">
+			<div class="profile" data-id="{{profile.id}}">
+				<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}_race.gif" /></span>
+				<span class="name">{{profile.userName}}</span>
+			</div>
+		</li>
+	</script>
+
+	<script src="http://10.0.1.32:4000/socket.io/socket.io.js"></script>
+	<script src="src/lib/handlebars-1.0.rc.1.js"></script>
+	<script src="src/lib/zepto.min.js"></script>
+	<script src="config.js"></script>
+	<script src="src/constants.js"></script>
+	<script src="src/dashboard.js"></script>
+</body>
+</html>
