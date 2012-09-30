@@ -189,7 +189,6 @@ ul {
 #race-view .controls button.selected {
 	background: #333;
 	color: #fff;
-	box-shadow:  4px 4px 4px 1px rgba(0, 0, 0, .3);
 }
 
 #race-stats-view {

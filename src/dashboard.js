@@ -87,10 +87,12 @@ DEALINGS IN THE SOFTWARE.
 	DashBoardRace.prototype.showScore = function (data) {
 		var instance          = this,
 			winner            = data.game.players[data.game.winner],
-			scoreViewTemplate = $(CONST.TPL_RACE_SCORE_VIEW).html(),
+			scoreViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
 			template          = Handlebars.compile(scoreViewTemplate),
 			html              = '',
-			players           = data.game.players;
+			players           = [];
+
+		$.each(data.game.players, function (index, item) { players.push(item); });
 
 		players.sort(function (p1, p2) {
 			if (p1.position == p2.position) return 0;
@@ -100,13 +102,14 @@ DEALINGS IN THE SOFTWARE.
 		$.each(players, function (index, item) {
 			item.position = 0;
 			html += template({
+				place: (index+1) + ' - ',
 				avatar_path: CONST.AVATARS_PATH,
 				profile: item
 			});
 		});
 
 		$(CONST.DOM_RACE_STATS_VIEW).hide();
-		$(DOM_SCORE_RACE_PLAYERS).html(html);
+		$(CONST.DOM_SCORE_RACE_PLAYERS).html(html);
 		$(CONST.DOM_SCORE_VIEW).show();
 	};
 

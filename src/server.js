@@ -246,16 +246,18 @@ GameServer.prototype.startGame = function () {
 GameServer.prototype.finishGame = function (winnerId) {
 	var instance = this;
 
-	instance.GAME.started   = false;
 	instance.GAME.finished  = true;
 	instance.GAME.createdAt = false;
 	instance.GAME.winner    = winnerId;
 
 	instance.initialSocket.broadcast.emit(CONST.SOCKET_FINISH, {
+		success: true,
 		game: instance.GAME
 	});
 
 	instance.dashBoardScore();
+
+	instance.GAME = instance.SETTINGS.game;
 };
 
 GameServer.prototype.totalPlayers = function () {

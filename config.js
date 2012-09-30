@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 
 (function(global) {
 	var CONFIG = {
-		serverAddress: '10.0.1.32',
+		serverAddress: '127.0.0.1',
 		serverPort: 4000,
 		maxPlayers: 10, // in miliseconds
 		game: {
