@@ -212,6 +212,8 @@ GameServer.prototype.checkForStart = function () {
 };
 
 GameServer.prototype.broadCastMessage = function (socket, data) {
+	var instance = this;
+
 	instance.broadCastSocket.broadcast.emit(socket, data);
 	instance.broadCastSocket.emit(socket, data);
 };
