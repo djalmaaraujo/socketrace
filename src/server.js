@@ -230,9 +230,10 @@ GameServer.prototype.startGame = function () {
 	var instance                 = this,
 		date                     = new Date();
 
-	instance.GAME.freezetime = 6,
+	instance.GAME.freezetime = instance.SETTINGS.freezetime;
 	instance.GAME.starting 	 = true;
 	instance.GAME.started    = false;
+
 	instance.TIME_freezeTime = setInterval(function () {
 		instance.GAME.freezetime--;
 

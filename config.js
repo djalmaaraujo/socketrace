@@ -28,10 +28,12 @@ DEALINGS IN THE SOFTWARE.
 		serverAddress: '127.0.0.1',
 		serverPort: 4000,
 		maxPlayers: 10, // in miliseconds
+		freezetime: 10,
 		game: {
 			screenSize: 800,
 			stepSize: 300,
 			playerSize: 60,
+			starting: false,
 			createdAt: false,
 			minPlayers: 3,
 			mode: 'auto', // auto or manual

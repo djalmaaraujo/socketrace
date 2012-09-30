@@ -74,6 +74,7 @@ DEALINGS IN THE SOFTWARE.
 		DOM_UL_AVATARS: 'ul.avatars',
 
 		GRID: 'grid',
+		H3: 'h3',
 
 		MESSAGE_BOX: '.message-box',
 		MESSAGE_CONNECTED: 'Você está conectado, escolha seu nome e avatar',
@@ -86,9 +87,11 @@ DEALINGS IN THE SOFTWARE.
 
 		NEXT: 'next',
 		RACE: 'race',
+		RACE_H3_DEFAULT_TEXT: 'Prepare-se',
 		REGISTER_SUCCESS: 'register_success',
 		SELECTED: 'selected',
 		SIGNUP: 'signup',
+		STR_BLANK: ' ',
 
 		SOCKET_CONNECTED: 'connected',
 		SOCKET_CONNECTION: 'connection',
@@ -112,6 +115,8 @@ DEALINGS IN THE SOFTWARE.
 		TPL_GRID_VIEW: '#tpl-grid-view',
 		TPL_RACE_VIEW: '#tpl-race-view',
 		TPL_RACE_SCORE_VIEW: '#tpl-race-score-view',
+
+		POINTS: '...',
 		VIEW: '.view'
 	};
 

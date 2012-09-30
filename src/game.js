@@ -84,10 +84,7 @@ DEALINGS IN THE SOFTWARE.
 		});
 
 		instance.socketServer.on(CONST.SOCKET_FREEZETIME, function (data) {
-			instance.showAlert({
-				dontErase: true,
-				message: CONST.MESSAGE_FREEZETIME + data.timeLeft + '...'
-			});
+			instance.handleFreezeTime(data);
 		});
 
 		instance.socketServer.on(CONST.SOCKET_UPDATE_GRID, function (data) {
@@ -253,9 +250,20 @@ DEALINGS IN THE SOFTWARE.
 
 			$(CONST.DOM_RACE_CONTROLS).parent().show();
 
-			instance.views.race.find('h3').html(CONST.MESSAGE_GOGOGO);
+			instance.views.race.find(CONST.H3).html(CONST.MESSAGE_GOGOGO);
 			instance.showAlert({message: CONST.MESSAGE_GOGOGO});
 		}
+	};
+
+	SocketRace.prototype.handleFreezeTime = function (data) {
+		var instance = this;
+
+		instance.showAlert({
+			dontErase: true,
+			message: CONST.MESSAGE_FREEZETIME + data.timeLeft + CONST.POINTS
+		});
+
+		$(CONST.DOM_RACE_VIEW).find(CONST.H3).html(CONST.RACE_H3_DEFAULT_TEXT + CONST.STR_BLANK + data.timeLeft + CONST.POINTS);
 	};
 
 	SocketRace.prototype.prepareRace = function (data) {
