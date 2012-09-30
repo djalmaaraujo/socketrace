@@ -170,7 +170,13 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 				});
 			}
 
-			if (instance.GAME.starting) instance.resetStartGame();
+			if (instance.GAME.starting) {
+				instance.broadCastMessage(CONST.SOCKET_PREPARE_START_RACE, {
+					success: true
+				});
+
+				instance.resetStartGame();
+			}
 
 			instance.dashBoardSync();
 		}

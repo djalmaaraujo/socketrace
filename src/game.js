@@ -241,7 +241,7 @@ DEALINGS IN THE SOFTWARE.
 			game         = data.game;
 
 		if (data.success) {
-			$(CONST.DOM_RACE_CONTROLS).onpress(CONST.CLICK, function (e) {
+			$(CONST.DOM_RACE_CONTROLS).on('touchstart', function (e) {
 				var self = $(e.target);
 
 				$(CONST.DOM_RACE_CONTROLS).removeClass(CONST.SELECTED);
@@ -281,7 +281,7 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this,
 			game 	 = data.game;
 
-		$(CONST.DOM_RACE_CONTROLS).offpress(CONST.CLICK);
+		$(CONST.DOM_RACE_CONTROLS).off('touchstart');
 
 		instance.showScore(data);
 	};
@@ -331,7 +331,7 @@ DEALINGS IN THE SOFTWARE.
 
 		$(CONST.DOM_UL_AVATARS).html(html);
 
-		$(CONST.DOM_SIGNUP_FORM_IMAGES).onpress(CONST.CLICK, function (e) {
+		$(CONST.DOM_SIGNUP_FORM_IMAGES).on('touchstart', function (e) {
 			var self = $(e.target);
 
 			$(CONST.DOM_INPUT_AVATAR).val(self.data('id'));
