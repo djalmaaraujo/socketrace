@@ -30,7 +30,7 @@ var GameServer = function() {
 	var	instance  = this;
 
 	instance.SETTINGS      = SOCKETRACE_CONFIG;
-	instance.initialSocket = null;
+	instance.broadCastSocket = null;
 	instance.GAME          = instance.SETTINGS.game;
 	instance.IO            = require(CONST.SOCKET_IO).listen(instance.SETTINGS.serverPort);
 	instance.DASHBOARD     = instance.IO;
@@ -84,9 +84,7 @@ GameServer.prototype.onConnectionHandler = function (socket) {
 	var instance = this,
 		socketId = socket.id;
 
-	if (!instance.initialSocket) {
-		instance.initialSocket = socket;
-	}
+	instance.broadCastSocket = socket;
 
 	if (instance.GAME.started) {
 		socket.emit(CONST.SOCKET_WAIT_NEXT_GAME, {
@@ -195,7 +193,7 @@ GameServer.prototype.checkForStart = function () {
 
 			if (total >= instance.GAME.minPlayers) {
 
-				instance.initialSocket.broadcast.emit(CONST.SOCKET_PREPARE_START_RACE, {
+				instance.broadCastSocket.broadcast.emit(CONST.SOCKET_PREPARE_START_RACE, {
 					success: true
 				});
 
@@ -223,7 +221,7 @@ GameServer.prototype.startGame = function () {
 		instance.GAME.freezetime--;
 
 		if (instance.GAME.freezetime > 0) {
-			instance.initialSocket.broadcast.emit(CONST.SOCKET_FREEZETIME, {
+			instance.broadCastSocket.broadcast.emit(CONST.SOCKET_FREEZETIME, {
 				timeLeft: instance.GAME.freezetime,
 				success: true
 			});
@@ -232,7 +230,7 @@ GameServer.prototype.startGame = function () {
 			instance.GAME.started = true;
 			instance.GAME.createdAt = date.getTime();
 
-			instance.initialSocket.broadcast.emit(CONST.SOCKET_START_RACE, {
+			instance.broadCastSocket.broadcast.emit(CONST.SOCKET_START_RACE, {
 				game: instance.GAME,
 				success: true
 			});
@@ -250,7 +248,7 @@ GameServer.prototype.finishGame = function (winnerId) {
 	instance.GAME.createdAt = false;
 	instance.GAME.winner    = winnerId;
 
-	instance.initialSocket.broadcast.emit(CONST.SOCKET_FINISH, {
+	instance.broadCastSocket.broadcast.emit(CONST.SOCKET_FINISH, {
 		success: true,
 		game: instance.GAME
 	});
