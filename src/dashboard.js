@@ -46,19 +46,7 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		instance.socketServer.on(CONST.SOCKET_STATS, function (data) {
-			var resultPlayers    = data.result,
-				raceViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
-				template         = Handlebars.compile(raceViewTemplate),
-				html             = '';
-
-			$.each(resultPlayers, function (index, item) {
-				html += template({
-					avatar_path: CONST.AVATARS_PATH,
-					profile: item
-				});
-			});
-
-			$(CONST.DOM_RACE_PLAYERS).html(html);
+			instance.onSyncHandler(data);
 		});
 
 		instance.socketServer.on(CONST.SOCKET_NEW_PLAYER, function (data) {
@@ -68,6 +56,23 @@ DEALINGS IN THE SOFTWARE.
 		instance.socketServer.on(CONST.SOCKET_SHOW_SCORE, function (data) {
 			instance.showScore(data);
 		});
+	};
+
+	DashBoardRace.prototype.onSyncHandler = function (data) {
+		var instance = this,
+			resultPlayers    = data.result,
+			raceViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
+			template         = Handlebars.compile(raceViewTemplate),
+			html             = '';
+
+		$.each(resultPlayers, function (index, item) {
+			html += template({
+				avatar_path: CONST.AVATARS_PATH,
+				profile: item
+			});
+		});
+
+		$(CONST.DOM_RACE_PLAYERS).html(html);
 	};
 
 	DashBoardRace.prototype.showAlert = function (data) {

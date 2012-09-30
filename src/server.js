@@ -170,6 +170,8 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 				});
 			}
 
+			if (instance.GAME.starting) instance.resetStartGame();
+
 			instance.dashBoardSync();
 		}
 		else {
@@ -223,6 +225,7 @@ GameServer.prototype.startGame = function () {
 		date                     = new Date();
 
 	instance.GAME.freezetime = 6,
+	instance.GAME.starting 	 = true;
 	instance.GAME.started    = false;
 	instance.TIME_freezeTime = setInterval(function () {
 		instance.GAME.freezetime--;
@@ -246,6 +249,13 @@ GameServer.prototype.startGame = function () {
 		}
 	}, 1000);
 
+};
+
+GameServer.prototype.resetStartGame = function () {
+	var instance = this;
+
+	clearInterval(instance.TIME_freezeTime);
+	instance.startGame();
 };
 
 GameServer.prototype.finishGame = function (winnerId) {
