@@ -275,7 +275,7 @@ GameServer.prototype.finishGame = function (winnerId) {
 
 	console.log("========================= \n");
 	console.log("==== JOGO FINALIZADO ==== \n")
-	console.log("Vencedor: " + winnerId + " : " + instance.GAME.players[winnerId].id + " \n");
+	console.log("Vencedor: " + winnerId + " : " + instance.GAME.players[winnerId].userName + " \n");
 	console.log("========================= \n");
 
 	instance.broadCastMessage(CONST.SOCKET_FINISH, {
