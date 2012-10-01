@@ -313,6 +313,9 @@ GameServer.prototype.dashBoardScore = function () {
 			game: instance.GAME
 		});
 	}
+
+	instance.GAME.players = {};
+	instance.checkForStart();
 };
 
 new GameServer();

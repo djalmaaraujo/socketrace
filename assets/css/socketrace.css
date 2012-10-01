@@ -40,10 +40,9 @@ ul {
 }
 
 #wrapper.stats {
-	min-width: auto;
-	max-width: auto;
-	width: 100%;
-	margin: 0;
+	min-width: 820px;
+	max-width: 820px;
+	width: 820px;
 }
 
 .header {
@@ -65,7 +64,7 @@ ul {
 	padding: 4px 0 0 0;
 	min-height: 15px;
 	color: #ff0000;
-	font-size: 10px
+	font-size: 1em
 }
 
 .view {
@@ -192,12 +191,16 @@ ul {
 }
 
 #race-stats-view {
-	width: 1900px
+	width: 800px;
+	background: #ccc;
 }
 #race-players {}
 #race-players li {
 	position: relative;
-	margin-top: 60px;
-	min-height: 60px;
+	margin-top: 20px;
+	min-height: 20px;
 	display: block;
+}
+#race-players li .profile {
+	background: none
 }
