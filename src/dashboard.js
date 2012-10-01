@@ -51,6 +51,10 @@ DEALINGS IN THE SOFTWARE.
 
 		instance.socketServer.on(CONST.SOCKET_NEW_PLAYER, function (data) {
 			instance.showAlert({message: CONST.MESSAGE_NEW_PLAYER + data.userName});
+
+			$(CONST.DOM_SCORE_VIEW).hide();
+			$(CONST.DOM_RACE_STATS_VIEW).show();
+			$(CONST.DOM_SCORE_RACE_PLAYERS).html('');
 		});
 
 		instance.socketServer.on(CONST.SOCKET_SHOW_SCORE, function (data) {
