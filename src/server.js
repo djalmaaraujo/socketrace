@@ -278,8 +278,6 @@ GameServer.prototype.finishGame = function (winnerId) {
 	});
 
 	instance.dashBoardScore();
-
-	instance.GAME = instance.SETTINGS.game;
 };
 
 GameServer.prototype.totalPlayers = function () {
@@ -315,6 +313,7 @@ GameServer.prototype.dashBoardScore = function () {
 	}
 
 	instance.GAME.players = {};
+	instance.GAME = instance.SETTINGS.game;
 	instance.checkForStart();
 };
 
