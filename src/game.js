@@ -306,6 +306,7 @@ DEALINGS IN THE SOFTWARE.
 
 		players.sort(function (p1, p2) {
 			if (p1.position == p2.position) return 0;
+
 			return (p1.position < p2.position);
 		});
 
