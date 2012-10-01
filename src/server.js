@@ -316,8 +316,6 @@ GameServer.prototype.dashBoardScore = function () {
 	delete instance.GAME;
 	instance.GAME = ce.clone(instance.SETTINGS.game);
 	instance.checkForStart();
-	console.log(instance.SETTINGS.game);
-	console.log(instance.GAME);
 };
 
 new GameServer();
