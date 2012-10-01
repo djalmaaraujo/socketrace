@@ -121,9 +121,9 @@ GameServer.prototype.onMoveHandler = function (data, socket) {
 				player.position = instance.GAME.screenSize - instance.GAME.playerSize;
 
 				instance.finishGame(playerId);
+			} else {
+				instance.dashBoardSync();
 			}
-
-			instance.dashBoardSync();
 		}
 	}
 };
