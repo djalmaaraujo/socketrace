@@ -25,15 +25,14 @@ DEALINGS IN THE SOFTWARE.
 
 var SOCKETRACE_CONFIG = require('../config.js').SOCKETRACE_CONFIG,
 	CONST             = require('./constants.js').SOCKETRACE_CONSTANTS,
-	Zepto             = require('zepto-node'),
-	$                 = Zepto;
+	ce                = require('cloneextend');
 
 var GameServer = function() {
 	var	instance  = this;
 
-	instance.SETTINGS      = $.clone(SOCKETRACE_CONFIG);
+	instance.SETTINGS      = ce.clone(SOCKETRACE_CONFIG);
 	instance.broadCastSocket = null;
-	instance.GAME          = $.clone(instance.SETTINGS.game);
+	instance.GAME          = ce.clone(instance.SETTINGS.game);
 	instance.IO            = require(CONST.SOCKET_IO).listen(instance.SETTINGS.serverPort);
 	instance.DASHBOARD     = instance.IO;
 
@@ -315,7 +314,7 @@ GameServer.prototype.dashBoardScore = function () {
 	}
 
 	delete instance.GAME;
-	instance.GAME = $.clone(instance.SETTINGS.game);
+	instance.GAME = ce.clone(instance.SETTINGS.game);
 	instance.checkForStart();
 	console.log(instance.SETTINGS.game);
 	console.log(instance.GAME);
