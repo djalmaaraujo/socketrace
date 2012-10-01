@@ -29,9 +29,9 @@ var SOCKETRACE_CONFIG = require('../config.js').SOCKETRACE_CONFIG,
 var GameServer = function() {
 	var	instance  = this;
 
-	instance.SETTINGS      = SOCKETRACE_CONFIG;
+	instance.SETTINGS      = $.clone(SOCKETRACE_CONFIG);
 	instance.broadCastSocket = null;
-	instance.GAME          = instance.SETTINGS.game;
+	instance.GAME          = $.clone(instance.SETTINGS.game);
 	instance.IO            = require(CONST.SOCKET_IO).listen(instance.SETTINGS.serverPort);
 	instance.DASHBOARD     = instance.IO;
 
@@ -313,7 +313,7 @@ GameServer.prototype.dashBoardScore = function () {
 	}
 
 	delete instance.GAME;
-	instance.GAME = instance.SETTINGS.game;
+	instance.GAME = $.clone(instance.SETTINGS.game);
 	instance.checkForStart();
 	console.log(instance.SETTINGS.game);
 	console.log(instance.GAME);
