@@ -312,7 +312,7 @@ GameServer.prototype.dashBoardScore = function () {
 	var instance = this;
 
 	if (instance.dashBoardSocket) {
-		instance.dashBoardSocket.emit(CONST.SOCKET_SHOW_SCORE, {
+		instance.dashBoardSocket.broadcast.emit(CONST.SOCKET_SHOW_SCORE, {
 			success: true,
 			game: instance.GAME
 		});
