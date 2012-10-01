@@ -24,7 +24,11 @@ DEALINGS IN THE SOFTWARE.
 */
 
 body {
-	background: url(../images/bg.png);
+	background: url(../images/bg-views.png) #e8e3df repeat-x;
+}
+
+.clear {
+	clear: both;
 }
 
 ul {
@@ -45,21 +49,6 @@ ul {
 	width: 820px;
 }
 
-.header {
-	text-align: center;
-	padding: 0 5px;
-}
-.header h1 {
-	float: left;
-	font-size: 1.2em;
-	line-height: .1em;
-	color: #00519d
-}
-
-.header img {
-	float: right;
-}
-
 .message-box {
 	padding: 4px 0 0 0;
 	min-height: 15px;
@@ -68,11 +57,9 @@ ul {
 }
 
 .view {
-	background: #e5e5e5;
-	padding: 10px 5px;
+	padding: 10px 10px;
 	display: none;
 	clear: both;
-	border-radius: 5px
 }
 
 .current {
@@ -80,20 +67,34 @@ ul {
 }
 
 #signup-view {
+	padding: 45px 0 0 0;
 	text-align: center;
 }
 
-#signup-view h4 {
-	font-size: .8em;
-	line-height: .1em
+#signup-view h3 {
+	background: white;
+	display: block;
+	padding: 4px 6px;
+	border-top: 2px solid #000;
+	border-bottom: 2px solid #000;
+}
+
+#signup-view .inputs {
+	display: block;
+	padding: 4px 6px;
+	background: white;
+	border-top: 2px solid #000;
+	border-bottom: 2px solid #000;
 }
 
 #signup-view input {
 	border: 1px solid #e5e5e5;
-	border-radius: 5px;
-	padding: 4px 8px;
-	font-size: 1em;
-	display: inline-block;
+	padding: 4px;
+	font-size: .8em;
+	display: block;
+	float: left;
+	margin-right: 5px;
+	width: 70%
 }
 
 #signup-view button {
@@ -102,35 +103,39 @@ ul {
 	background: #000;
 	border: none;
 	color: white;
-	border-radius: 5px;
-	padding: 4px 8px;
+	padding: 4px;
+	display: block;
+	float: left;
+	width: 20%
 }
 
 #signup-view .avatars {
 	clear: both;
-	min-height: 105px;
-	width: 280px;
-	margin: 0 auto
+	min-height: 110px;
+	width: 322px;
+	margin: 0 auto 15px auto
 }
 
 #signup-view .avatars li {
 	float: left;
 	display: block;
-	width: 50px;
+	width: 72px;
 	font-size: 12px;
+	padding: 2px 4px;
 	border-radius: 5px;
-	padding: 5px
+	background: #ffffff;
 }
 
 #signup-view .avatars li button {}
 
 #signup-view .avatars li.selected {
-	background: #ccc;
+	background: #e5e5e5;
+	border-right: 2px solid #ddd
 }
 
 #signup-view .avatars li img {
-	width: 32px;
-	height: 32px;
+	width: 72px;
+	height: 72px;
 	display: block;
 	margin: 0 auto;
 	cursor: pointer;
@@ -142,7 +147,6 @@ ul {
 	min-height: 40px;
 	background: #f5f5f5;
 	margin-bottom: 5px;
-	border-radius: 10px;
 	padding: 2px 10px;
 }
 .profile span.avatar{
@@ -151,8 +155,9 @@ ul {
 	margin-right: 5px
 }
 .profile span.avatar img {
-	height: 32px
+	height: 72px
 }
+
 .profile span.name{
 	float: left;
 	font-size: 14px;
