@@ -312,7 +312,7 @@ GameServer.prototype.dashBoardScore = function () {
 		});
 	}
 
-	instance.GAME.players = {};
+	delete instance.GAME;
 	instance.GAME = instance.SETTINGS.game;
 	instance.checkForStart();
 	console.log(instance.GAME);
