@@ -26,29 +26,29 @@ DEALINGS IN THE SOFTWARE.
 (function(global) {
 	var CONSTANTS = {
 		AFTER_SHOW: 'afterShow_',
-		AVATARS_PATH: 'assets/images/avatar/',
+		AVATARS_PATH: 'assets/images/players/',
 		AVATARS: [
 			{
-				id: 'homer',
-				name: 'Homer:P',
-				src: 'assets/images/avatar/homer',
+				id: 'strong_man',
+				name: 'Strong Man',
+				src: 'assets/images/players/strong_man',
 				selected: 'selected'
 			},
 
 			{
-				id: 'lisa',
-				name: 'Lisa:)',
-				src: 'assets/images/avatar/lisa'
+				id: 'music_man',
+				name: 'Music Man',
+				src: 'assets/images/players/music_man'
 			},
 			{
-				id: 'bart',
-				name: 'Bart O.o',
-				src: 'assets/images/avatar/bart'
+				id: 'style_guy',
+				name: 'Style Guy',
+				src: 'assets/images/players/style_guy'
 			},
 			{
-				id: 'marge',
-				name: 'Marge ^^',
-				src: 'assets/images/avatar/marge'
+				id: 'skate_man',
+				name: 'Skate Man',
+				src: 'assets/images/players/skate_man'
 			}
 		],
 

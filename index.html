@@ -60,7 +60,7 @@
 		<script type="text/x-handlebars-template" id="tpl-avatar-list">
 			{{#each avatars}}
 				<li class="{{selected}}">
-					<img src="{{src}}_attack.gif" data-id="{{id}}" />
+					<img src="{{src}}.gif" data-id="{{id}}" />
 					<p>{{name}}</p>
 				</li>
 			{{/each}}
@@ -69,13 +69,13 @@
 		<script type="text/x-handlebars-template" id="tpl-grid-view">
 			<ul class="grid-players">
 				<div class="profile">
-					<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}_attack.gif" /></span>
+					<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}.gif" /></span>
 					<span class="name">{{profile.userName}}</span>
 				</div>
 				{{#each players}}
 					<li>
 						<div class="profile">
-							<span class="avatar"><img src="assets/images/avatar/{{avatar}}_attack.gif" /></span>
+							<span class="avatar"><img src="assets/images/players/{{avatar}}.gif" /></span>
 							<span class="name">{{userName}}</span>
 						</div>
 					</li>
@@ -87,7 +87,7 @@
 
 		<script type="text/x-handlebars-template" id="tpl-race-view">
 			<div class="profile">
-				<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}_race.gif" /></span>
+				<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}.gif" /></span>
 				<span class="name">{{profile.userName}}</span>
 			</div>
 		</script>
@@ -95,7 +95,7 @@
 		<script type="text/x-handlebars-template" id="tpl-race-score-view">
 			<li style="left: {{profile.position}}px">
 				<div class="profile" data-id="{{profile.id}}">
-					<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}_race.gif" /></span>
+					<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}.gif" /></span>
 					<span class="name">{{place}}{{profile.userName}}</span>
 				</div>
 			</li>
