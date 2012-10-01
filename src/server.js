@@ -24,7 +24,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 var SOCKETRACE_CONFIG = require('../config.js').SOCKETRACE_CONFIG,
-	CONST             = require('./constants.js').SOCKETRACE_CONSTANTS;
+	CONST             = require('./constants.js').SOCKETRACE_CONSTANTS,
+	Zepto             = require('zepto-node'),
+	$                 = Zepto;
 
 var GameServer = function() {
 	var	instance  = this;
