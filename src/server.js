@@ -315,6 +315,7 @@ GameServer.prototype.dashBoardScore = function () {
 	instance.GAME.players = {};
 	instance.GAME = instance.SETTINGS.game;
 	instance.checkForStart();
+	console.log(instance.GAME);
 };
 
 new GameServer();
