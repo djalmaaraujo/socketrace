@@ -25,17 +25,17 @@ DEALINGS IN THE SOFTWARE.
 
 (function(global) {
 	var CONFIG = {
-		serverAddress: '127.0.0.1',
+		serverAddress: '10.0.1.129',
 		serverPort: 4000,
-		maxPlayers: 50, 
-		freezetime: 10, // in miliseconds
+		maxPlayers: 100,
+		freezetime: 20, // in miliseconds
 		game: {
-			screenSize: 800,
-			stepSize: 10,
-			playerSize: 60,
+			screenSize: 1200,
+			stepSize: 5,
+			playerSize: 70,
 			starting: false,
 			createdAt: false,
-			minPlayers: 5,
+			minPlayers: 10,
 			mode: 'auto', // auto or manual
 			players: {},
 			started: false,
