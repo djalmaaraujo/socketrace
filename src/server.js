@@ -72,6 +72,10 @@ GameServer.prototype.handlers = function () {
 		socket.on(CONST.SOCKET_MOVE, function (data) {
 			instance.onMoveHandler(data, socket);
 		});
+
+		socket.on(CONST.SOCKET_DASHBOARD_SYNC, function (data) {
+			instance.onRequestSyncHandler(data);
+		});
 	});
 };
 
@@ -113,8 +117,6 @@ GameServer.prototype.onMoveHandler = function (data, socket) {
 			player.position += instance.GAME.stepSize;
 
 			if (player.position >= instance.GAME.screenSize) {
-				player.position = instance.GAME.screenSize - instance.GAME.playerSize;
-
 				instance.finishGame(playerId);
 			} else {
 				instance.dashBoardSync();
@@ -128,10 +130,8 @@ GameServer.prototype.onUpdateGridHandler = function (data, socket) {
 
 	socket.emit(CONST.SOCKET_UPDATE_GRID, {
 		success: true,
-		result: {
-			players: instance.GAME.players,
-			total: instance.totalPlayers()
-		}
+		players: instance.GAME.players,
+		total: instance.totalPlayers()
 	});
 };
 
@@ -171,6 +171,7 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 			});
 
 			socket.broadcast.emit(CONST.SOCKET_NEW_PLAYER, {
+				game: instance.GAME,
 				userName: user.userName
 			});
 
@@ -298,6 +299,14 @@ GameServer.prototype.totalPlayers = function () {
 	for (player in instance.GAME.players) players++;
 
 	return parseInt(players);
+};
+
+GameServer.prototype.onRequestSyncHandler = function (data) {
+	var instance = this;
+
+	if (data.success) {
+		instance.dashBoardSync();
+	}
 };
 
 GameServer.prototype.dashBoardSync = function () {

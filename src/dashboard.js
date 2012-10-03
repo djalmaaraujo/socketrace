@@ -40,6 +40,8 @@ DEALINGS IN THE SOFTWARE.
 		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort);
 
 		instance.handlers();
+
+		instance.requestSync();
 	};
 
 	DashBoardRace.prototype.handlers = function () {
@@ -56,6 +58,27 @@ DEALINGS IN THE SOFTWARE.
 		instance.socketServer.on(CONST.SOCKET_FINISH, function (data) {
 			instance.showScore(data);
 		});
+
+		instance.socketServer.on(CONST.SOCKET_START_RACE, function (data) {
+			instance.startGame(data);
+		});
+	};
+
+	DashBoardRace.prototype.startGame = function (data) {
+		var instance = this;
+
+		var pb = 0;
+		instance.moveBackGround = setInterval(function () {
+			$('body').css({'background-position': (pb-- * 1.2) + 'px 0'});
+		}, 10);
+
+		$(CONST.DOM_RACE_PLAYERS).find('li').css({left: 0});
+	};
+
+	DashBoardRace.prototype.requestSync = function () {
+		var instance = this;
+
+		instance.socketServer.emit(CONST.SOCKET_DASHBOARD_SYNC, {success: true});
 	};
 
 	DashBoardRace.prototype.onSyncHandler = function (data) {
@@ -63,13 +86,17 @@ DEALINGS IN THE SOFTWARE.
 			raceViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
 			template         = Handlebars.compile(raceViewTemplate),
 			players          = [],
-			html             = '';
+			html             = '',
+			top = 0;
 
 		$.each(data.game.players, function (index, item) { players.push(item); });
 		$.each(players, function (index, item) {
+			item.position = (data.game.started) ? item.position : item.position + (index*30);
+
 			html += template({
 				avatar_path: CONST.AVATARS_PATH,
-				profile: item
+				profile: item,
+				top: index * 35
 			});
 		});
 
@@ -97,6 +124,8 @@ DEALINGS IN THE SOFTWARE.
 			template          = Handlebars.compile(scoreViewTemplate),
 			html              = '',
 			players           = [];
+
+		clearInterval(instance.moveBackGround);
 
 		$.each(data.game.players, function (index, item) { players.push(item); });
 

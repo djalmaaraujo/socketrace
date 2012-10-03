@@ -110,6 +110,7 @@ DEALINGS IN THE SOFTWARE.
 
 		SOCKET_IO: 'socket.io',
 		SUBMIT: 'submit',
+		TOUCH_START: 'touchstart',
 
 		TPL_AVATARS_LIST: '#tpl-avatar-list',
 		TPL_GRID_VIEW: '#tpl-grid-view',

@@ -2,7 +2,7 @@
 <html lang="en-US">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<title>Socket Race</title>
 		<link rel="stylesheet" href="assets/css/normalize.min.css" media="all" />
 		<link rel="stylesheet" href="assets/css/socketrace.css" media="all" />
@@ -10,9 +10,8 @@
 	<body>
 		<div id="wrapper" class="stats">
 			<header class="header">
-				<img src="assets/images/liferay.png" alt="" />
-				<h1>Socket Race</h1>
 				<h3 class="message-box"></h3>
+				<img src="assets/images/socketrace.png" alt="" />
 			</header>
 
 			<section id="race-stats-view" class="view current">
@@ -20,13 +19,16 @@
 			</section>
 
 			<section id="score-view" class="view">
-				<h2>Fim de jogo!</h2>
-				<p><strong>Posições:</strong></p>
-				<div class="score-view-content">
-					<div class="winner"></div>
-					<ul id="score-race-players"></ul>
+				<div class="dashboard-score-game">
+					<h2>Fim de jogo!</h2>
+					<p><strong>Posições:</strong></p>
+					<div class="score-view-content">
+						<div class="winner"></div>
+						<ul id="score-race-players"></ul>
+					</div>
+					<p>Obrigado por participar!</p>
 				</div>
-				<p>Obrigado por participar!</p>
+
 			</section>
 		</div>
 
@@ -34,12 +36,12 @@
 			<li style="left: {{profile.position}}px">
 				<div class="profile" data-id="{{profile.id}}">
 					<span class="avatar"><img src="{{avatar_path}}{{profile.avatar}}.gif" /></span>
-					<span class="name">{{place}}{{profile.userName}}</span>
+					<span class="name" style="margin-top:{{top}}px">{{place}}{{profile.userName}}</span>
 				</div>
 			</li>
 		</script>
 
-		<script src="http://127.0.0.1:4000/socket.io/socket.io.js"></script>
+		<script src="http://10.0.1.32:4000/socket.io/socket.io.js"></script>
 		<script src="src/lib/handlebars-1.0.rc.1.js"></script>
 		<script src="src/lib/zepto.min.js"></script>
 		<script src="config.js"></script>

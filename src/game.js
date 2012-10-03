@@ -195,6 +195,8 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		$(CONST.MESSAGE_BOX).html('');
+
+		instance.updateGridScreen();
 		instance.showView('grid');
 	};
 
@@ -208,16 +210,15 @@ DEALINGS IN THE SOFTWARE.
 		}
 		else {
 			if (data.success) {
-				var resultPlayers    = data.result.players,
+				var resultPlayers    = data.players,
 					gridViewTemplate = $(CONST.TPL_GRID_VIEW).html(),
 					template         = Handlebars.compile(gridViewTemplate),
 					players          = [];
 
-				delete resultPlayers[instance.player.socketId];
+				$.each(data.players, function (index, item) { players.push(item); });
 
 				var html = template({
-						profile: instance.player.data,
-						slots: (instance.settings.maxPlayers-1) - data.result.total,
+						slots: instance.settings.maxPlayers - data.total,
 						avatar_path: CONST.AVATARS_PATH,
 						players: players
 					});
@@ -232,13 +233,19 @@ DEALINGS IN THE SOFTWARE.
 		}
 	};
 
+	SocketRace.prototype.handleFreezeTime = function (data) {
+		var instance = this;
+
+		$(CONST.DOM_RACE_VIEW).find(CONST.H3).html(CONST.RACE_H3_DEFAULT_TEXT + CONST.STR_BLANK + data.timeLeft + CONST.POINTS);
+	};
+
 	SocketRace.prototype.startRace = function (data) {
 		var instance 	 = this,
 			player       = instance.player,
 			game         = data.game;
 
 		if (data.success) {
-			$(CONST.DOM_RACE_CONTROLS).on('click', function (e) {
+			$(CONST.DOM_RACE_CONTROLS).on(CONST.TOUCH_START, function (e) {
 				var self = $(e.target);
 
 				$(CONST.DOM_RACE_CONTROLS).removeClass(CONST.SELECTED);
@@ -248,22 +255,16 @@ DEALINGS IN THE SOFTWARE.
 				e.preventDefault();
 			});
 
+			$(CONST.DOM_RACE_VIEW).find(CONST.H3).html('');
 			$(CONST.DOM_RACE_CONTROLS).parent().show();
 
-			instance.views.race.find(CONST.H3).html(CONST.MESSAGE_GOGOGO);
 			instance.showAlert({message: CONST.MESSAGE_GOGOGO});
+
+			var pb = 0;
+			instance.moveBackGround = setInterval(function () {
+				$('body').css({'background-position': (pb-- * 1.2) + 'px 0'});
+			}, 10);
 		}
-	};
-
-	SocketRace.prototype.handleFreezeTime = function (data) {
-		var instance = this;
-
-		instance.showAlert({
-			dontErase: true,
-			message: CONST.MESSAGE_FREEZETIME + data.timeLeft + CONST.POINTS
-		});
-
-		$(CONST.DOM_RACE_VIEW).find(CONST.H3).html(CONST.RACE_H3_DEFAULT_TEXT + CONST.STR_BLANK + data.timeLeft + CONST.POINTS);
 	};
 
 	SocketRace.prototype.prepareRace = function (data) {
@@ -288,37 +289,15 @@ DEALINGS IN THE SOFTWARE.
 	SocketRace.prototype.finishGame = function (data) {
 		var instance = this;
 
+		clearInterval(instance.moveBackGround);
+
 		$(CONST.DOM_RACE_CONTROLS).off('touchstart');
 
 		instance.showScore(data);
 	};
 
 	SocketRace.prototype.showScore = function (data) {
-		var instance          = this,
-			winner            = data.game.players[data.game.winner],
-			scoreViewTemplate = $(CONST.TPL_RACE_SCORE_VIEW).html(),
-			template          = Handlebars.compile(scoreViewTemplate),
-			html              = '',
-			players           = [];
-
-		$.each(data.game.players, function (index, item) { players.push(item); });
-
-		players.sort(function (p1, p2) {
-			if (p1.position == p2.position) return 0;
-
-			return (p1.position < p2.position);
-		});
-
-		$.each(players, function (index, item) {
-			item.position = 0;
-			html += template({
-				place: (index+1) + ' - ',
-				avatar_path: CONST.AVATARS_PATH,
-				profile: item
-			});
-		});
-
-		$(CONST.DOM_SCORE_RACE_PLAYERS).html(html);
+		var instance          = this;
 
 		instance.showView('score');
 	};
@@ -339,7 +318,7 @@ DEALINGS IN THE SOFTWARE.
 
 		$(CONST.DOM_UL_AVATARS).html(html);
 
-		$(CONST.DOM_SIGNUP_FORM_IMAGES).on('click', function (e) {
+		$(CONST.DOM_SIGNUP_FORM_IMAGES).on(CONST.TOUCH_START, function (e) {
 			var self = $(e.target);
 
 			$(CONST.DOM_INPUT_AVATAR).val(self.data('id'));
