@@ -238,7 +238,7 @@ DEALINGS IN THE SOFTWARE.
 			game         = data.game;
 
 		if (data.success) {
-			$(CONST.DOM_RACE_CONTROLS).on('touchstart', function (e) {
+			$(CONST.DOM_RACE_CONTROLS).on('click', function (e) {
 				var self = $(e.target);
 
 				$(CONST.DOM_RACE_CONTROLS).removeClass(CONST.SELECTED);
@@ -310,7 +310,6 @@ DEALINGS IN THE SOFTWARE.
 		});
 
 		$.each(players, function (index, item) {
-			alert(item.userName);
 			item.position = 0;
 			html += template({
 				place: (index+1) + ' - ',
@@ -340,7 +339,7 @@ DEALINGS IN THE SOFTWARE.
 
 		$(CONST.DOM_UL_AVATARS).html(html);
 
-		$(CONST.DOM_SIGNUP_FORM_IMAGES).on('touchstart', function (e) {
+		$(CONST.DOM_SIGNUP_FORM_IMAGES).on('click', function (e) {
 			var self = $(e.target);
 
 			$(CONST.DOM_INPUT_AVATAR).val(self.data('id'));

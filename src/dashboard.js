@@ -37,7 +37,7 @@ DEALINGS IN THE SOFTWARE.
 	DashBoardRace.prototype.bootstrap = function () {
 		var instance = this;
 
-		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort + '/dashboard');
+		instance.socketServer = io.connect('http://' + instance.settings.serverAddress + ':' + instance.settings.serverPort);
 
 		instance.handlers();
 	};
@@ -45,31 +45,28 @@ DEALINGS IN THE SOFTWARE.
 	DashBoardRace.prototype.handlers = function () {
 		var instance = this;
 
-		instance.socketServer.on(CONST.SOCKET_STATS, function (data) {
+		instance.socketServer.on(CONST.SOCKET_DASHBOARD_SYNC, function (data) {
 			instance.onSyncHandler(data);
 		});
 
 		instance.socketServer.on(CONST.SOCKET_NEW_PLAYER, function (data) {
 			instance.showAlert({message: CONST.MESSAGE_NEW_PLAYER + data.userName});
-
-			$(CONST.DOM_SCORE_VIEW).hide();
-			$(CONST.DOM_RACE_STATS_VIEW).show();
-			$(CONST.DOM_SCORE_RACE_PLAYERS).html('');
 		});
 
-		instance.socketServer.on(CONST.SOCKET_SHOW_SCORE, function (data) {
+		instance.socketServer.on(CONST.SOCKET_FINISH, function (data) {
 			instance.showScore(data);
 		});
 	};
 
 	DashBoardRace.prototype.onSyncHandler = function (data) {
 		var instance = this,
-			resultPlayers    = data.result,
 			raceViewTemplate = $(CONST.TPL_RACE_VIEW).html(),
 			template         = Handlebars.compile(raceViewTemplate),
+			players          = [],
 			html             = '';
 
-		$.each(resultPlayers, function (index, item) {
+		$.each(data.game.players, function (index, item) { players.push(item); });
+		$.each(players, function (index, item) {
 			html += template({
 				avatar_path: CONST.AVATARS_PATH,
 				profile: item
@@ -94,9 +91,6 @@ DEALINGS IN THE SOFTWARE.
 	};
 
 	DashBoardRace.prototype.showScore = function (data) {
-
-		console.log(data);
-
 		var instance          = this,
 			winner            = data.game.players[data.game.winner],
 			scoreViewTemplate = $(CONST.TPL_RACE_VIEW).html(),

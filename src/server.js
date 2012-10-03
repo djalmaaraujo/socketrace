@@ -73,13 +73,6 @@ GameServer.prototype.handlers = function () {
 			instance.onMoveHandler(data, socket);
 		});
 	});
-
-	instance.DASHBOARD
-		.of('/dashboard')
-  		.on(CONST.SOCKET_CONNECTION, function (socket) {
-  			instance.dashBoardSocket = socket;
-  			instance.dashBoardSync();
-		});
 };
 
 GameServer.prototype.onConnectionHandler = function (socket) {
@@ -146,9 +139,24 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 	var instance = this;
 
 	if (data) {
+		data.userName = data.userName.toSlug();
+
 		if (data.id && data.userName && data.avatar) {
+
+			for (var player in instance.GAME.players) {
+				if (instance.GAME.players[player].userName == data.userName) {
+					socket.emit(CONST.SOCKET_SIGNUP, {
+						success: false,
+						message: 'Já existe um jogador com este nome, tente outro',
+						result: false
+					});
+
+					return false;
+				}
+			}
+
 			var socketId = data.id,
-				user = {
+				user     = {
 					id: socketId,
 					userName: data.userName,
 					avatar: data.avatar,
@@ -165,12 +173,6 @@ GameServer.prototype.onSignupHandler = function (data, socket) {
 			socket.broadcast.emit(CONST.SOCKET_NEW_PLAYER, {
 				userName: user.userName
 			});
-
-			if (instance.dashBoardSocket) {
-				instance.dashBoardSocket.emit(CONST.SOCKET_NEW_PLAYER, {
-					userName: user.userName
-				});
-			}
 
 			if (instance.GAME.starting) {
 				instance.broadCastMessage(CONST.SOCKET_PREPARE_START_RACE, {
@@ -284,7 +286,9 @@ GameServer.prototype.finishGame = function (winnerId) {
 		game: instance.GAME
 	});
 
-	instance.dashBoardScore();
+	delete instance.GAME;
+	instance.GAME = ce.clone(instance.SETTINGS.game);
+	instance.checkForStart();
 };
 
 GameServer.prototype.totalPlayers = function () {
@@ -296,32 +300,21 @@ GameServer.prototype.totalPlayers = function () {
 	return parseInt(players);
 };
 
-
 GameServer.prototype.dashBoardSync = function () {
 	var instance = this;
 
-	if (instance.dashBoardSocket) {
-		instance.dashBoardSocket.emit(CONST.SOCKET_STATS, {
-			success: true,
-			result: instance.GAME.players,
-			game: instance.GAME
-		});
-	}
+	instance.broadCastMessage(CONST.SOCKET_DASHBOARD_SYNC, {
+		success: true,
+		game: instance.GAME
+	});
 };
 
-GameServer.prototype.dashBoardScore = function () {
-	var instance = this;
+String.prototype.toSlug = function() {
+	var slugcontent = this,
+		slugcontent_hyphens = slugcontent.replace(/\s/g,'-'),
+		finishedslug = slugcontent_hyphens.replace(/[^a-zA-Z0-9\-]/g,'');
 
-	if (instance.dashBoardSocket) {
-		instance.dashBoardSocket.broadcast.emit(CONST.SOCKET_SHOW_SCORE, {
-			success: true,
-			game: instance.GAME
-		});
-	}
-
-	delete instance.GAME;
-	instance.GAME = ce.clone(instance.SETTINGS.game);
-	instance.checkForStart();
-};
+	return finishedslug;
+}
 
 new GameServer();

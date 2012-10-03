@@ -103,7 +103,7 @@ DEALINGS IN THE SOFTWARE.
 		SOCKET_SIGNUP: 'signup',
 		SOCKET_SHOW_SCORE: 'showScore',
 		SOCKET_START_RACE: 'start',
-		SOCKET_STATS: 'stats',
+		SOCKET_STATS: 'dashboardSync',
 		SOCKET_PREPARE_START_RACE: 'prepareRace',
 		SOCKET_UPDATE_GRID: 'updateGrid',
 		SOCKET_WAIT_NEXT_GAME: 'waitForNextGame',
