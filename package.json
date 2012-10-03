@@ -1,0 +1,15 @@
+{
+  "name": "socketrace",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "socket.io": "*",
+    "cloneextend": "*"
+  },
+  "engines": {
+    "node": "0.6.x"
+  }
+}
