@@ -94,6 +94,9 @@ DEALINGS IN THE SOFTWARE.
 	};
 
 	DashBoardRace.prototype.showScore = function (data) {
+
+		console.log(data);
+
 		var instance          = this,
 			winner            = data.game.players[data.game.winner],
 			scoreViewTemplate = $(CONST.TPL_RACE_VIEW).html(),

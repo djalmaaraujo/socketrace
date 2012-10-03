@@ -180,7 +180,7 @@ ul {
 #race-view .controls button {
 	float: left;
 	display: block;
-	min-width: 60px;
+	min-width: 40px;
 	text-align: center;
 	font-size: 3em;
 	background: #000000;
@@ -200,11 +200,19 @@ ul {
 }
 #race-players {}
 #race-players li {
-	position: relative;
-	margin-top: 20px;
+	position: absolute;
+	margin-top: 0px;
 	min-height: 20px;
 	display: block;
 }
 #race-players li .profile {
 	background: none
+}
+#race-players li .name {
+	position: absolute;
+	margin-top: 80px;
+	left: 10px;
+	font-size: 10px;
+	text-align: center;
+	width: 70px;
 }

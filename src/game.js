@@ -286,8 +286,7 @@ DEALINGS IN THE SOFTWARE.
 	};
 
 	SocketRace.prototype.finishGame = function (data) {
-		var instance = this,
-			game 	 = data.game;
+		var instance = this;
 
 		$(CONST.DOM_RACE_CONTROLS).off('touchstart');
 
@@ -311,6 +310,7 @@ DEALINGS IN THE SOFTWARE.
 		});
 
 		$.each(players, function (index, item) {
+			alert(item.userName);
 			item.position = 0;
 			html += template({
 				place: (index+1) + ' - ',
