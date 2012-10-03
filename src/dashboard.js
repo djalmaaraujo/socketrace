@@ -62,6 +62,10 @@ DEALINGS IN THE SOFTWARE.
 		instance.socketServer.on(CONST.SOCKET_START_RACE, function (data) {
 			instance.startGame(data);
 		});
+
+		instance.socketServer.on(CONST.SOCKET_FREEZETIME, function (data) {
+			instance.handleFreezeTime(data);
+		});
 	};
 
 	DashBoardRace.prototype.startGame = function (data) {
@@ -72,6 +76,7 @@ DEALINGS IN THE SOFTWARE.
 			$('body').css({'background-position': (pb-- * 1.2) + 'px 0'});
 		}, 10);
 
+		$(CONST.MESSAGE_BOX).html('');
 		$(CONST.DOM_RACE_PLAYERS).find('li').css({left: 0});
 	};
 
@@ -79,6 +84,15 @@ DEALINGS IN THE SOFTWARE.
 		var instance = this;
 
 		instance.socketServer.emit(CONST.SOCKET_DASHBOARD_SYNC, {success: true});
+	};
+
+	DashBoardRace.prototype.handleFreezeTime = function (data) {
+		var instance = this;
+
+		instance.showAlert({
+			dontErase: true,
+			message: CONST.RACE_H3_DEFAULT_TEXT + CONST.STR_BLANK + data.timeLeft + CONST.POINTS
+		});
 	};
 
 	DashBoardRace.prototype.onSyncHandler = function (data) {

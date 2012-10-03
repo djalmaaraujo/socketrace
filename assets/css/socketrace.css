@@ -52,6 +52,10 @@ ul {
 	width: 100%;
 }
 
+#wrapper.stats .message-box {
+	font-size: 20px
+}
+
 .message-box {
 	min-height: 13px;
 	font-weight: bold;

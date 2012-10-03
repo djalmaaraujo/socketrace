@@ -138,61 +138,70 @@ GameServer.prototype.onUpdateGridHandler = function (data, socket) {
 GameServer.prototype.onSignupHandler = function (data, socket) {
 	var instance = this;
 
-	if (data) {
-		data.userName = data.userName.toSlug();
+	if (instance.GAME.started) {
+		socket.emit(CONST.SOCKET_WAIT_NEXT_GAME, {
+			success: true
+		});
 
-		if (data.id && data.userName && data.avatar) {
+		return false;
+	} else {
+		if (data) {
+			data.userName = data.userName.toSlug();
 
-			for (var player in instance.GAME.players) {
-				if (instance.GAME.players[player].userName == data.userName) {
-					socket.emit(CONST.SOCKET_SIGNUP, {
-						success: false,
-						message: 'Já existe um jogador com este nome, tente outro',
-						result: false
-					});
+			if (data.id && data.userName && data.avatar) {
 
-					return false;
+				for (var player in instance.GAME.players) {
+					if (instance.GAME.players[player].userName == data.userName) {
+						socket.emit(CONST.SOCKET_SIGNUP, {
+							success: false,
+							message: 'Já existe um jogador com este nome, tente outro',
+							result: false
+						});
+
+						return false;
+					}
 				}
-			}
 
-			var socketId = data.id,
-				user     = {
-					id: socketId,
-					userName: data.userName,
-					avatar: data.avatar,
-					position: 0
-				};
+				var socketId = data.id,
+					user     = {
+						id: socketId,
+						userName: data.userName,
+						avatar: data.avatar,
+						position: 0
+					};
 
-			instance.GAME.players[socketId] = user;
+				instance.GAME.players[socketId] = user;
 
-			socket.emit(CONST.SOCKET_SIGNUP, {
-				success: true,
-				result: user
-			});
-
-			socket.broadcast.emit(CONST.SOCKET_NEW_PLAYER, {
-				game: instance.GAME,
-				userName: user.userName
-			});
-
-			if (instance.GAME.starting) {
-				instance.broadCastMessage(CONST.SOCKET_PREPARE_START_RACE, {
-					success: true
+				socket.emit(CONST.SOCKET_SIGNUP, {
+					success: true,
+					result: user
 				});
 
-				instance.resetStartGame();
-			}
+				socket.broadcast.emit(CONST.SOCKET_NEW_PLAYER, {
+					game: instance.GAME,
+					userName: user.userName
+				});
 
-			instance.dashBoardSync();
-		}
-		else {
-			socket.emit(CONST.SOCKET_SIGNUP, {
-				success: false,
-				message: 'Os dados estão inválidos. Recarregue a página e tente novamente',
-				result: false
-			});
+				if (instance.GAME.starting) {
+					instance.broadCastMessage(CONST.SOCKET_PREPARE_START_RACE, {
+						success: true
+					});
+
+					instance.resetStartGame();
+				}
+
+				instance.dashBoardSync();
+			}
+			else {
+				socket.emit(CONST.SOCKET_SIGNUP, {
+					success: false,
+					message: 'Os dados estão inválidos. Recarregue a página e tente novamente',
+					result: false
+				});
+			}
 		}
 	}
+
 };
 
 GameServer.prototype.checkForStart = function () {
@@ -249,6 +258,7 @@ GameServer.prototype.startGame = function () {
 			});
 		}
 		else {
+			instance.GAME.starting = false;
 			instance.GAME.started = true;
 			instance.GAME.createdAt = date.getTime();
 
