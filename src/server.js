@@ -78,6 +78,7 @@ GameServer.prototype.handlers = function () {
 		.of('/dashboard')
   		.on(CONST.SOCKET_CONNECTION, function (socket) {
   			instance.dashBoardSocket = socket;
+  			instance.dashBoardSync();
 		});
 };
 

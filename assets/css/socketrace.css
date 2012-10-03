@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 body {
-	background: url(../images/bg-views.png) #e8e3df repeat-x;
+	background: url(../images/bg-views.gif) #e8e3df repeat-x;
 }
 
 .clear {
@@ -196,8 +196,7 @@ ul {
 }
 
 #race-stats-view {
-	width: 800px;
-	background: #ccc;
+	width: 800px
 }
 #race-players {}
 #race-players li {
